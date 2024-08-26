@@ -17,12 +17,10 @@ const userSchema = mongoose.Schema(
       type: String,
       Required: true,
     },
-    playlistIds: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Playlist",
-      },
-    ],
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timeStamps: true,
