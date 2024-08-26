@@ -2,12 +2,12 @@ const { initializeApp } = require("firebase/app");
 const { getStorage } = require("firebase/storage");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwxAeZmmM6COIyPjUL8C4myEhe-In7Y5g",
-  authDomain: "play-ly.firebaseapp.com",
-  projectId: "play-ly",
-  storageBucket: "play-ly.appspot.com",
-  messagingSenderId: "345572535655",
-  appId: "1:345572535655:web:7ac12f712ea9cc732f13c2",
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
 };
 
 // Initialize Firebase app and storage
