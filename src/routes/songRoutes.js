@@ -18,7 +18,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get("/", getAllSongs);
 
 // Upload song
-router.post("/upload", authenticate, upload.single("file"), addSong);
+router.post("/upload", authenticate, upload.array("files", 5), addSong);
 
 // Trending song routes
 router.get("/trending", getTrending);

@@ -13,7 +13,7 @@ const songSchema = new mongoose.Schema(
     },
     firebaseUrl: {
       type: String,
-      required: true,
+      // required: true,
     },
     title: {
       type: String,
