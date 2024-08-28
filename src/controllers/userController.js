@@ -65,15 +65,18 @@ const loginUser = async (req, res) => {
     }
 
     // Generate a JSON Web Token (JWT)
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "none",
-      secure: false,
-      sameSite: "Lax",
+      sameSite: "None",
+      secure: true,
     });
 
     res.status(200).json({ token });

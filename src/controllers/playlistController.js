@@ -36,7 +36,7 @@ const getUserPlaylists = async (req, res) => {
     const playlist = await Playlist.findOne({ userId });
 
     if (!playlist) {
-      return res.status(404).json({ message: "Playlists not found" });
+      return res.status(200).json([]);
     }
 
     res.status(200).json(playlist.playlists);
