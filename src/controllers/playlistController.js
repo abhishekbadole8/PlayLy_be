@@ -19,7 +19,11 @@ const createPlaylist = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    res.status(201).json(updatedPlaylist);
+    // Extract the last pushed playlist
+    const newPlaylist =
+      updatedPlaylist.playlists[updatedPlaylist.playlists.length - 1];
+
+    res.status(201).json(newPlaylist);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
