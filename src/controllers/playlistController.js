@@ -116,7 +116,7 @@ const addRemoveSongInPlaylist = async (req, res) => {
 // @access private
 const deletePlaylist = async (req, res) => {
   try {
-    const { playlistId } = req.params;
+    const { playlistId } = req.body;
 
     const playlist = await Playlist.findById(playlistId);
 
