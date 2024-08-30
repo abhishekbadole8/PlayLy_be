@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Playlist = require("../models/playlistModel");
 
 // @desc Create playlist
@@ -57,22 +58,39 @@ const updatePlaylist = async (req, res) => {
   try {
     const { playlistId } = req.params;
     const { title } = req.body;
+    const userId = req.userId;
 
     if (!title) {
       return res.status(400).json({ message: "Playlist name is required" });
     }
 
-    const playlist = await Playlist.findById(playlistId);
+    // Validate ObjectId for playlistId
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+      return res.status(400).json({ message: "Invalid playlist ID" });
+    }
+
+    const playlist = await Playlist.findOne({ userId });
 
     if (!playlist) {
+      return res.status(404).json({ message: "User playlist not found" });
+    }
+
+    // Find the specific playlist to update
+    const playlistToUpdate = playlist.playlists.find(
+      (p) => p._id.toString() === playlistId
+    );
+
+    if (!playlistToUpdate) {
       return res.status(404).json({ message: "Playlist not found" });
     }
 
-    playlist.title = title;
+    // Update the playlist title
+    playlistToUpdate.title = title;
 
+    // Save the updated document to the database
     await playlist.save();
 
-    res.status(200).json(playlist);
+    res.status(200).json(playlistToUpdate);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
@@ -120,15 +138,34 @@ const addRemoveSongInPlaylist = async (req, res) => {
 // @access private
 const deletePlaylist = async (req, res) => {
   try {
-    const { playlistId } = req.body;
+    const { playlistId } = req.params;
+    const { userId } = req;
 
-    const playlist = await Playlist.findById(playlistId);
+    // Validate ObjectId for playlistId
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+      return res.status(400).json({ message: "Invalid playlist ID" });
+    }
+
+    const playlist = await Playlist.findOne({ userId });
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }
 
-    await playlist.remove();
+    // Find the specific playlist to delete
+    const playlistIndex = playlist.playlists.findIndex(
+      (playlist) => playlist._id.toString() === playlistId
+    );
+
+    if (playlistIndex === -1) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    // Remove the playlist from the array
+    playlist.playlists.splice(playlistIndex, 1);
+
+    // Save the updated document to the database
+    await playlist.save();
 
     res.status(200).json({ message: "Playlist deleted" });
   } catch (error) {

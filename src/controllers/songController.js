@@ -113,15 +113,25 @@ const getAllSongs = async (req, res) => {
   }
 };
 
-// @desc GET trending songs
-// @route GET /api/songs/trending
-const getTrending = async (req, res) => {
+// @desc GET trendings songs
+// @route GET /api/songs/trendings
+const getTrendings = async (req, res) => {
   try {
-    const trendingSongs = await Song.find().sort({ playCount: -1 }).limit(10);
+    // Get the total number of songs
+    const totalSongs = await Song.countDocuments();
+
+    // Calculate the number of songs in the top 20%
+    const topPercentageCount = Math.ceil(totalSongs * 0.35);
+
+    // Fetch the top 20% of songs based on play count
+    const trendingSongs = await Song.find()
+      .sort({ playCount: -1 })
+      .limit(topPercentageCount);
+
     res.status(200).json(trendingSongs);
   } catch (error) {
     res.status(500).json({ message: "Error fetching trending songs" });
   }
 };
 
-module.exports = { addSong, getAllSongs, getTrending };
+module.exports = { addSong, getAllSongs, getTrendings };

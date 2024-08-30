@@ -18,13 +18,13 @@ router.get("/", getUserPlaylists);
 // Create a new playlist
 router.post("/", createPlaylist);
 
-// Update playlist name
+// Update playlist title
 router.put("/:playlistId", updatePlaylist);
 
 // Add/Remove Song in a playlist
 router.put("/:playlistId", addRemoveSongInPlaylist);
 
 // Delete a playlist
-router.delete("/", deletePlaylist);
+router.delete("/:playlistId", deletePlaylist);
 
 module.exports = router;
