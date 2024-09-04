@@ -3,7 +3,8 @@ const authenticate = require("../middlewares/authenticate");
 
 const {
   createPlaylist,
-  getUserPlaylists,
+  getPlaylists,
+  getPlaylist,
   addRemoveSongInPlaylist,
   deletePlaylist,
   updatePlaylist,
@@ -11,9 +12,14 @@ const {
 
 const router = express.Router();
 
+// Middlware to check only auth user
 router.use(authenticate);
 
-router.get("/", getUserPlaylists);
+// Get Playlists
+router.get("/", getPlaylists);
+
+// Get Playlist
+router.get("/:playlistId", getPlaylist);
 
 // Create a new playlist
 router.post("/", createPlaylist);

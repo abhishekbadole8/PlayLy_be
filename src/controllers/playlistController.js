@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Playlist = require("../models/playlistModel");
 
-// @desc Create playlist
+// @desc Create Playlist
 // @route POST api/playlists/
 // @access private
 const createPlaylist = async (req, res) => {
@@ -31,10 +31,10 @@ const createPlaylist = async (req, res) => {
   }
 };
 
-// @desc Get user playlists
+// @desc Get Playlists
 // @route GET api/playlists/
 // @access private
-const getUserPlaylists = async (req, res) => {
+const getPlaylists = async (req, res) => {
   try {
     const userId = req.userId;
 
@@ -45,6 +45,41 @@ const getUserPlaylists = async (req, res) => {
     }
 
     res.status(200).json(playlist.playlists);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @desc Get Playlist
+// @route GET api/playlists/:playlistId
+// @access private
+const getPlaylist = async (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const userId = req.userId;
+
+    if (!playlistId) {
+      return res.status(400).json({ message: "Playlist Id is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+      return res.status(400).json({ message: "Invalid Playlist Id" });
+    }
+
+    const userPlaylist = await Playlist.findOne({ userId });
+
+    if (!userPlaylist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    const playlist = await userPlaylist.playlists.id(playlistId);
+
+    if (!playlist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    res.status(200).json(playlist);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
@@ -198,7 +233,8 @@ const deletePlaylist = async (req, res) => {
 
 module.exports = {
   createPlaylist,
-  getUserPlaylists,
+  getPlaylists,
+  getPlaylist,
   updatePlaylist,
   addRemoveSongInPlaylist,
   deletePlaylist,
