@@ -22,7 +22,7 @@ router.post("/", createPlaylist);
 router.put("/:playlistId", updatePlaylist);
 
 // Add/Remove Song in a playlist
-router.put("/:playlistId", addRemoveSongInPlaylist);
+router.put("/:playlistId/:songId", addRemoveSongInPlaylist);
 
 // Delete a playlist
 router.delete("/:playlistId", deletePlaylist);

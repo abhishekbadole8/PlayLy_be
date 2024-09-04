@@ -102,8 +102,8 @@ const updatePlaylist = async (req, res) => {
 // @access private
 const addRemoveSongInPlaylist = async (req, res) => {
   try {
-    const { playlistId } = req.params;
-    const { songId } = req.body;
+    const { playlistId, songId } = req.params;
+    const userId = req.userId;
 
     if (!playlistId || !songId) {
       return res
@@ -111,24 +111,46 @@ const addRemoveSongInPlaylist = async (req, res) => {
         .json({ message: "Playlist ID and Song ID are required" });
     }
 
-    const playlist = await Playlist.findById(playlistId);
+    if (
+      !mongoose.Types.ObjectId.isValid(playlistId) ||
+      !mongoose.Types.ObjectId.isValid(songId)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Playlist ID or Song ID" });
+    }
+
+    const userPlaylist = await Playlist.findOne({ userId });
+
+    if (!userPlaylist) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    const playlist = await userPlaylist.playlists.id(playlistId);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
     }
 
-    const songIndex = playlist.songs.indexOf(songId);
+    const songIndex = await playlist.songs.indexOf(songId);
 
     if (songIndex !== -1) {
+      // Remove song from playlist
       playlist.songs.splice(songIndex, 1);
+      await userPlaylist.save();
+      return res
+        .status(200)
+        .json({ message: "Song removed from playlist", playlist });
     } else {
+      // Add song to playlist
       playlist.songs.push(songId);
+      await userPlaylist.save();
+      return res
+        .status(200)
+        .json({ message: "Song added to playlist", playlist });
     }
-
-    await playlist.save();
-
-    res.status(200).json(playlist);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Server error" });
   }
 };
