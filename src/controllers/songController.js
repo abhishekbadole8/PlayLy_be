@@ -134,4 +134,58 @@ const getTrendings = async (req, res) => {
   }
 };
 
-module.exports = { addSong, getAllSongs, getTrendings };
+// @desc Increment play count
+// @route PUT /api/songs/:songId/play
+const incrementPlayCount = async (req, res) => {
+  try {
+    const songId = req.params.songId;
+
+    const song = await Song.findByIdAndUpdate(
+      songId,
+      { $inc: { playCount: 1 } }, // Increment playCount by 1
+      { new: true }
+    );
+
+    if (!song) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+
+    res.status(200).json(song);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating play count", error: error.message });
+  }
+};
+
+// @desc Increment download count
+// @route PUT /api/songs/:songId/download
+const incrementDownloadCount = async (req, res) => {
+  try {
+    const songId = req.params.songId;
+
+    const song = await Song.findByIdAndUpdate(
+      songId,
+      { $inc: { downloadCount: 1 } }, // Increment downloadCount by 1
+      { new: true }
+    );
+
+    if (!song) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+
+    res.status(200).json(song);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating download count", error: error.message });
+  }
+};
+
+module.exports = {
+  addSong,
+  getAllSongs,
+  getTrendings,
+  incrementPlayCount,
+  incrementDownloadCount,
+};

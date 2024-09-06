@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Playlist = require("../models/playlistModel");
+const Song = require("../models/songModel");
 
 // @desc Create Playlist
 // @route POST api/playlists/
@@ -51,10 +52,10 @@ const getPlaylists = async (req, res) => {
   }
 };
 
-// @desc Get Playlist
+// @desc Get Playlist Songs
 // @route GET api/playlists/:playlistId
 // @access private
-const getPlaylist = async (req, res) => {
+const getPlaylistSongs = async (req, res) => {
   try {
     const { playlistId } = req.params;
     const userId = req.userId;
@@ -79,7 +80,14 @@ const getPlaylist = async (req, res) => {
       return res.status(404).json({ message: "Playlist not found" });
     }
 
-    res.status(200).json(playlist);
+    // Fetch the full song details for each song in the playlist
+    const songs = await Song.find({
+      _id: { $in: playlist.songs },
+    });
+
+    console.log(songs);
+
+    res.status(200).json(songs);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
@@ -234,7 +242,7 @@ const deletePlaylist = async (req, res) => {
 module.exports = {
   createPlaylist,
   getPlaylists,
-  getPlaylist,
+  getPlaylistSongs,
   updatePlaylist,
   addRemoveSongInPlaylist,
   deletePlaylist,

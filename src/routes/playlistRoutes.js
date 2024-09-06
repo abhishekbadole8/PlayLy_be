@@ -4,7 +4,7 @@ const authenticate = require("../middlewares/authenticate");
 const {
   createPlaylist,
   getPlaylists,
-  getPlaylist,
+  getPlaylistSongs,
   addRemoveSongInPlaylist,
   deletePlaylist,
   updatePlaylist,
@@ -18,8 +18,8 @@ router.use(authenticate);
 // Get Playlists
 router.get("/", getPlaylists);
 
-// Get Playlist
-router.get("/:playlistId", getPlaylist);
+// Get Playlist Songs
+router.get("/:playlistId", getPlaylistSongs);
 
 // Create a new playlist
 router.post("/", createPlaylist);
