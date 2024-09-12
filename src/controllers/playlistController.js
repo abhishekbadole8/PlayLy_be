@@ -85,8 +85,6 @@ const getPlaylistSongs = async (req, res) => {
       _id: { $in: playlist.songs },
     });
 
-    console.log(songs);
-
     res.status(200).json(songs);
   } catch (error) {
     console.log(error);
